@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { WeatherModule } from './weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
 import { CountriesModule } from './countries/countries.module';
+import { UserModule } from './user/user.module';
+import { PrismaService } from './common/services/prisma.service';
 
 @Module({
   imports: [
@@ -11,9 +11,10 @@ import { CountriesModule } from './countries/countries.module';
       isGlobal: true
     }),
     WeatherModule,
-    CountriesModule
+    CountriesModule,
+    UserModule
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [PrismaService],
 })
 export class AppModule {}
