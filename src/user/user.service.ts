@@ -14,31 +14,37 @@ export class UserService {
 
   async getUsers() {
     try {
-      const users = await this.prisma.user.findMany(
-        {
-          select: {
-            id: true,
-            email: true,
-            name: true,
-            createdAt: true,
-            updatedAt: true,
-          }
+      console.log('🔍 Tentative de récupération des utilisateurs...');
+
+      const users = await this.prisma.user.findMany({
+        select: {
+          id: true,
+          email: true,
+          name: true,
+          createdAt: true,
+          updatedAt: true,
         }
-      )
+      });
+
+      console.log('✅ Utilisateurs trouvés:', users.length);
+
       return {
         data: users,
         message: 'Users found',
         success: true
-      }
+      };
     } catch (error) {
-      console.log(error)
+      // Affiche l'erreur complète avec tous les détails
+      console.error('❌ Erreur complète:', error);
+      console.error('❌ Message:', error.message);
+      console.error('❌ Stack:', error.stack);
+
       return {
         data: null,
-        message: 'Users not found',
+        message: error.message || 'Users not found',
         success: false
-      }
+      };
     }
-
   }
 
   getUser(id: number) {
