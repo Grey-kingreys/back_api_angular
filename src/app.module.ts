@@ -3,6 +3,7 @@ import { WeatherModule } from './weather/weather.module';
 import { ConfigModule } from '@nestjs/config';
 import { CountriesModule } from './countries/countries.module';
 import { UserModule } from './user/user.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -11,7 +12,8 @@ import { UserModule } from './user/user.module';
     }),
     WeatherModule,
     CountriesModule,
-    UserModule
+    UserModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],
