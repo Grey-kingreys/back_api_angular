@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/common/services/prisma.service';
 
@@ -8,14 +7,8 @@ export class UserService {
 
   constructor(private readonly prisma: PrismaService){}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
-  }
-
   async getUsers() {
     try {
-      console.log('🔍 Tentative de récupération des utilisateurs...');
-
       const users = await this.prisma.user.findMany({
         select: {
           id: true,
@@ -26,19 +19,12 @@ export class UserService {
         }
       });
 
-      console.log('✅ Utilisateurs trouvés:', users.length);
-
       return {
         data: users,
-        message: 'Users found',
+        message: 'Les utilisateurs trouvés',
         success: true
       };
     } catch (error) {
-      // Affiche l'erreur complète avec tous les détails
-      console.error('❌ Erreur complète:', error);
-      console.error('❌ Message:', error.message);
-      console.error('❌ Stack:', error.stack);
-
       return {
         data: null,
         message: error.message || 'Users not found',
@@ -47,16 +33,43 @@ export class UserService {
     }
   }
 
-  getUser(id: number) {
-    return `This action returns a #${id} user`;
+  async getUser({userId} : {userId: string}) {
+    try {
+      const user = await this.prisma.user.findUnique({
+      where: {
+        id : userId
+      },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        createdAt: true,
+        updatedAt: true,
+      }
+    })
+    return {
+      data: user,
+      message: "Utilisateur trouvé",
+      success: true
+    }}
+    catch(erreur) {
+      console.error('erreur complet: ', erreur);
+      console.error('message: ', erreur.message);
+      console.error('stack: ', erreur.stack);
+      return {
+        data: null,
+        message: erreur.message || 'User not found',
+        success: false
+      }
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update({userId} : {userId: string}, updateUserDto: UpdateUserDto) {
+    return `This action updates a #${userId} user`;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove({userId} : {userId: string}) {
+    return `This action removes a #${userId} user`;
   }
 }
 

@@ -1,6 +1,9 @@
-import { Controller, Get, Param, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param, BadRequestException, UseGuards } from '@nestjs/common';
 import { CountriesService } from './countries.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
+
+@UseGuards(AuthGuard)
 @Controller('countries')
 export class CountriesController {
     constructor(private readonly countriesService: CountriesService) { }

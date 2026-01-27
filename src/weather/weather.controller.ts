@@ -1,5 +1,6 @@
 import { Controller, Get, Query, BadRequestException } from '@nestjs/common';
 import { WeatherService } from './weather.service';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('weather')
 export class WeatherController {

@@ -1,7 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv';
-dotenv.config;
+import { ValidationPipe } from '@nestjs/common';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+
+dotenv.config();
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -10,7 +13,24 @@ async function bootstrap() {
     credentials: true
   })
 
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    transform: true,
+  }));
+
+  const config = new DocumentBuilder()
+    .setTitle('API Auth')
+    .setDescription('Documentation de l’API d’authentification')
+    .setVersion('1.0')
+    .addBearerAuth() // pour JWT
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api/docs', app, document);
+
+
   await app.listen(process.env.PORT ?? 3000);
-  console.log('🚀 Backend running on ');
+  console.log('🚀 Backend running on ', process.env.PORT);
+
 }
 bootstrap();
