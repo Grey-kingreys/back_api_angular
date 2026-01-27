@@ -31,6 +31,7 @@ export class AuthService {
         success: true
       }
     } catch (error) {
+      console.log(error)
       return {
         data: null,
         message: error.message,
@@ -81,6 +82,7 @@ export class AuthService {
         success: true
       }
     } catch (error) {
+      console.log(error)
       return {
         data: null,
         message: error.message,
