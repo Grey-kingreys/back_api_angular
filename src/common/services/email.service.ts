@@ -25,7 +25,7 @@ export class EmailService {
     async sendWelcomeEmail(email: string, name: string): Promise<void> {
         try {
             const mailOptions = {
-                from: `"Gestion de Stock" <${process.env.SMTP_USER}>`,
+                from: `"Monde et Pokemon" <${process.env.SMTP_USER}>`,
                 to: email,
                 subject: '🎉 Bienvenue sur notre plateforme !',
                 html: `
@@ -50,13 +50,13 @@ export class EmailService {
                 <div class="content">
                   <p>Bonjour <strong>${name}</strong>,</p>
                   
-                  <p>Nous sommes ravis de vous accueillir sur notre plateforme de <strong>Gestion de Stock Multi-Magasins</strong> !</p>
+                  <p>Nous sommes ravis de vous accueillir sur notre plateforme de <strong>Monde et Pokemon</strong> !</p>
                   
                   <p>Votre compte a été créé avec succès. Vous pouvez maintenant :</p>
                   <ul>
-                    <li>Gérer vos stocks en temps réel</li>
-                    <li>Suivre vos ventes et achats</li>
-                    <li>Consulter vos rapports financiers</li>
+                    <li>Verifier la liste des Pokemon et des pays du monde</li>
+                    <li>Verifier les information et les states d'un pokemon</li>
+                    <li>Verifier les informations d'un pays</li>
                     <li>Et bien plus encore !</li>
                   </ul>
                   
@@ -68,10 +68,10 @@ export class EmailService {
                   
                   <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
                   
-                  <p>Cordialement,<br>L'équipe Gestion de Stock</p>
+                  <p>Cordialement,<br>Souleymane Diallo</p>
                 </div>
                 <div class="footer">
-                  <p>© ${new Date().getFullYear()} Gestion de Stock. Tous droits réservés.</p>
+                  <p>© ${new Date().getFullYear()} Monde et Pokemon. Tous droits réservés.</p>
                   <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
                 </div>
               </div>
@@ -97,10 +97,10 @@ export class EmailService {
         resetToken: string
     ): Promise<void> {
         try {
-            const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
+          const resetUrl = `${process.env.ORIGIN_LINK}/reset-password?token=${resetToken}`;
 
             const mailOptions = {
-                from: `"Gestion de Stock" <${process.env.SMTP_USER}>`,
+                from: `"Monde et Pokemon" <${process.env.SMTP_USER}>`,
                 to: email,
                 subject: '🔐 Réinitialisation de votre mot de passe',
                 html: `
@@ -148,10 +148,10 @@ export class EmailService {
                   <p>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</p>
                   <p style="word-break: break-all; color: #667eea;">${resetUrl}</p>
                   
-                  <p>Cordialement,<br>L'équipe Gestion de Stock</p>
+                  <p>Cordialement,<br>Souleymane Diallo</p>
                 </div>
                 <div class="footer">
-                  <p>© ${new Date().getFullYear()} Gestion de Stock. Tous droits réservés.</p>
+                  <p>© ${new Date().getFullYear()} Monde et Pokemon. Tous droits réservés.</p>
                   <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
                 </div>
               </div>
