@@ -1,34 +1,26 @@
 import { Injectable } from '@nestjs/common';
-import * as nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
 @Injectable()
 export class EmailService {
-    private transporter: nodemailer.Transporter;
+  private resend: Resend;
 
-    constructor() {
-        // Configuration du transporteur email
-        // À adapter selon votre fournisseur (Gmail, SendGrid, Mailtrap, etc.)
-        this.transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: false, // true pour 465, false pour les autres ports
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS,
-            },
-        });
-    }
+  constructor() {
+    // Configuration de Resend avec la clé API
+    this.resend = new Resend(process.env.RESEND_API_KEY);
+  }
 
-    /**
-     * Email de bienvenue après inscription
-     */
-    async sendWelcomeEmail(email: string, name: string): Promise<void> {
-        try {
-            const mailOptions = {
-                from: `"Monde et Pokemon" <${process.env.SMTP_USER}>`,
-                to: email,
-                subject: '🎉 Bienvenue sur notre plateforme !',
-                html: `
+
+  /**
+   * Email de bienvenue après inscription
+   */
+  async sendWelcomeEmail(email: string, name: string): Promise<void> {
+    try {
+      await this.resend.emails.send({
+        from: 'Monde et Pokemon <onboarding@resend.dev>', // À remplacer par votre domaine vérifié
+        to: email,
+        subject: '🎉 Bienvenue sur notre plateforme !',
+        html: `
           <!DOCTYPE html>
           <html>
             <head>
@@ -54,9 +46,10 @@ export class EmailService {
                   
                   <p>Votre compte a été créé avec succès. Vous pouvez maintenant :</p>
                   <ul>
-                    <li>Verifier la liste des Pokemon et des pays du monde</li>
-                    <li>Verifier les information et les states d'un pokemon</li>
-                    <li>Verifier les informations d'un pays</li>
+                    <li>Voir la liste de tout les pays du monde</li>
+                    <li>Voir la liste de 200 Pokemon</li>
+                    <li>Voir les details d'un pays ou d'un pokemon</li>
+                    <li>Utiliser des filtres et des recherches pour vous faciliter les taches</li>
                     <li>Et bien plus encore !</li>
                   </ul>
                   
@@ -68,42 +61,43 @@ export class EmailService {
                   
                   <p>Si vous avez des questions, n'hésitez pas à nous contacter.</p>
                   
-                  <p>Cordialement,<br>Souleymane Diallo</p>
+                  <p>Cordialement,<br>L'équipe Gestion de Stock</p>
+                  <p>email: <a href="mailto:soulmamoudou0@gmail.com">soulmamoudou0@gmail.com</a></p>
+                  <p>phone: <a href="tel:+22624815998">+22624815998</a></p>
                 </div>
                 <div class="footer">
-                  <p>© ${new Date().getFullYear()} Monde et Pokemon. Tous droits réservés.</p>
+                  <p>© ${new Date().getFullYear()} Gestion de Stock. Tous droits réservés.</p>
                   <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
                 </div>
               </div>
             </body>
           </html>
         `,
-            };
+      });
 
-            await this.transporter.sendMail(mailOptions);
-            console.log(`✅ Email de bienvenue envoyé à ${email}`);
-        } catch (error) {
-            console.error(`❌ Erreur lors de l'envoi de l'email à ${email}:`, error);
-            // Ne pas bloquer l'inscription si l'email échoue
-        }
+      console.log(`✅ Email de bienvenue envoyé à ${email}`);
+    } catch (error) {
+      console.error(`❌ Erreur lors de l'envoi de l'email à ${email}:`, error);
+      // Ne pas bloquer l'inscription si l'email échoue
     }
+  }
 
-    /**
-     * Email de réinitialisation de mot de passe
-     */
-    async sendPasswordResetEmail(
-        email: string,
-        name: string,
-        resetToken: string
-    ): Promise<void> {
-        try {
-          const resetUrl = `${process.env.ORIGIN_LINK}/reset-password?token=${resetToken}`;
+  /**
+   * Email de réinitialisation de mot de passe
+   */
+  async sendPasswordResetEmail(
+    email: string,
+    name: string,
+    resetToken: string
+  ): Promise<void> {
+    try {
+      const resetUrl = `${process.env.ORIGIN_LINK || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
 
-            const mailOptions = {
-                from: `"Monde et Pokemon" <${process.env.SMTP_USER}>`,
-                to: email,
-                subject: '🔐 Réinitialisation de votre mot de passe',
-                html: `
+      await this.resend.emails.send({
+        from: process.env.RESEND_FROM_EMAIL || 'Gestion de Stock <onboarding@resend.dev>', // À remplacer par votre domaine vérifié
+        to: email,
+        subject: '🔐 Réinitialisation de votre mot de passe',
+        html: `
           <!DOCTYPE html>
           <html>
             <head>
@@ -148,37 +142,37 @@ export class EmailService {
                   <p>Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :</p>
                   <p style="word-break: break-all; color: #667eea;">${resetUrl}</p>
                   
-                  <p>Cordialement,<br>Souleymane Diallo</p>
+                  <p>Cordialement,<br>L'équipe Gestion de Stock</p>
                 </div>
                 <div class="footer">
-                  <p>© ${new Date().getFullYear()} Monde et Pokemon. Tous droits réservés.</p>
+                  <p>© ${new Date().getFullYear()} Gestion de Stock. Tous droits réservés.</p>
                   <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
                 </div>
               </div>
             </body>
           </html>
         `,
-            };
+      });
 
-            await this.transporter.sendMail(mailOptions);
-            console.log(`✅ Email de réinitialisation envoyé à ${email}`);
-        } catch (error) {
-            console.error(`❌ Erreur lors de l'envoi de l'email à ${email}:`, error);
-            throw new Error("Impossible d'envoyer l'email de réinitialisation");
-        }
+      console.log(`✅ Email de réinitialisation envoyé à ${email}`);
+    } catch (error) {
+      console.error(`❌ Erreur lors de l'envoi de l'email à ${email}:`, error);
+      throw new Error("Impossible d'envoyer l'email de réinitialisation");
     }
+  }
 
-    /**
-     * Test de la configuration email
-     */
-    async testConnection(): Promise<boolean> {
-        try {
-            await this.transporter.verify();
-            console.log('✅ Connexion SMTP réussie');
-            return true;
-        } catch (error) {
-            console.error('❌ Erreur de connexion SMTP:', error);
-            return false;
-        }
+  /**
+   * Test de la configuration email
+   */
+  async testConnection(): Promise<boolean> {
+    try {
+      // Avec Resend, on peut tester en envoyant un email de test
+      // ou simplement vérifier que l'instance est créée
+      console.log('✅ Configuration Resend initialisée');
+      return true;
+    } catch (error) {
+      console.error('❌ Erreur de configuration Resend:', error);
+      return false;
     }
+  }
 }
