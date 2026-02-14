@@ -54,7 +54,7 @@ export class EmailService {
                   </ul>
                   
                   <div style="text-align: center;">
-                    <a href="${process.env.FRONTEND_URL || 'http://localhost:5173'}/login" class="button">
+                    <a href="${process.env.ORIGIN_LINK || 'http://localhost:5173'}/login" class="button">
                       Se connecter
                     </a>
                   </div>
